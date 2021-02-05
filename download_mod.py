@@ -1,5 +1,7 @@
 from selenium import webdriver
+import subprocess
 import time
+import os
 
 
 class ModDownload():
@@ -27,8 +29,32 @@ class ModDownload():
         time.sleep(1)
         self.acceptbutton.click()
 
+    # def show_downloaded_files(self):
+    #     self.browser.get('chrome://downloads/')
+    #     time.sleep(1)
+    #
+    # def download_installator(self):
+    #     self.installator = self.browser.find_elements_by_xpath('//*[@id="file-link"]')
+    #     time.sleep(1)
+    #     self.installator.click()
+
+# TODO podmienic nazwe wersji installera pobierajac scraperem aktualna wersje ze strony, i dokonczyc przeklikanie instalacji
+
+
+    def get_installer_from_dir(self):
+        directory = r"C:\Users\dklec\Downloads"
+        subprocess.Popen(os.path.join(directory, "Aslains_WoT_Modpack_Installer_v.1.11.1.2_02.exe"))
+
+
+
+
+
+
 
 mods = ModDownload()
 mods.get_page()
 mods.accept_cookies()
 mods.get_mod()
+# mods.show_downloaded_files()
+# mods.download_installator()
+mods.get_installer_from_dir()
