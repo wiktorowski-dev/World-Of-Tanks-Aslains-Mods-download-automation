@@ -4,6 +4,7 @@ import time
 import re
 
 from selenium import webdriver
+from setuptools.command.easy_install import sys_executable
 
 
 class ModDownload():
@@ -21,11 +22,14 @@ class ModDownload():
         self.accept.click()
         time.sleep(1)
 
+    # TODO dodac try i except na klikanie roznych directow, przejsc do chrome downloads zeby dac allow na pobranie pliku
     def mod_download(self):
+
         self.direct = self.browser.find_elements_by_xpath(
-            '//*[@id="comment-13_wrap"]/div[2]/div[1]/p[8]/span[1]/a')[0]
+            '//*[@id="comment-13_wrap"]/div[2]/div[1]/p[9]/span/a')[0]
         time.sleep(1)
         self.direct.click()
+
 
     def get_mod_version_number(self):
         self.version = self.browser.find_elements_by_xpath(
@@ -63,7 +67,14 @@ class ModDownload():
 
     def get_installer_from_dir(self):
         directory = r"C:\Users\dklec\Downloads"
-        subprocess.Popen(os.path.join(directory, "Aslains_WoT_Modpack_Installer_v."
+        file_name = "Aslains_WoT_Modpack_Installer_v."
+
+        full_name = ("Aslains_WoT_Modpack_Installer_v."
+                     + self.get_mod_version_number()
+                     + self.get_next_number() + ".exe.torrent")
+        print(full_name)
+
+        subprocess.Popen(os.path.join(directory, file_name
                                       + self.get_mod_version_number()
                                       + self.get_next_number() + ".exe"))
 
