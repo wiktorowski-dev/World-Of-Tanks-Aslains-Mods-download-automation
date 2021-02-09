@@ -12,11 +12,9 @@ from selenium.webdriver.chrome.options import Options
 
 class ModDownload():
 
-
     def __init__(self):
         chrome_options = Options()
         chrome_options.add_argument("user-data-dir=selenium")
-
 
         self.browser = webdriver.Chrome(options=chrome_options)
 
@@ -75,48 +73,39 @@ class ModDownload():
 
         return number
 
-    def wait_for_file(self):
+    def wait_for_file_and_open(self):
         path_downloads = r"C:\Users\dklec\Downloads"
+        full_file_path = r"C:\Users\dklec\Downloads\Aslains_WoT_Modpack_Installer_v.1.11.1.3_00.exe"
 
-        file_name = ("Aslains_WoT_Modpack_Installer_v."
-                     + self.get_mod_version_number()
-                     + self.get_next_number() + ".exe")
+        file_name = "Aslains_WoT_Modpack_Installer_v." + self.get_mod_version_number() + self.get_next_number() + ".exe"
 
-        file_path_fix_name = ("Aslains_WoT_Modpack_Installer_v."
-                     + self.get_mod_version_number()
-                     + self.get_next_number())
-        # TODO dlaczego tego kurwa nie ma, moze zrobic to inaczej
-        while not os.path.exists("Aslains_WoT_Modpack_Installer_v.1.11.1.3_00"):
-            time.sleep(1)
+        while not os.path.exists(full_file_path):
+            time.sleep(3.0)
 
-            print("nie ma")
+            print("File doesnt exist, retry ...")
+        try:
+            subprocess.Popen(os.path.join(path_downloads, file_name))
 
-        if os.path.isfile(file_path_fix_name):
-            subprocess.Popen(os.path.join(path_downloads, file_name
-                                          + self.get_mod_version_number()
-                                          + self.get_next_number() + ".exe"))
-        else:
-            raise ValueError("%s isn't a file!" % file_name)
+            webdriver.Chrome.close(self.browser)
+
+        except Exception as e:
+            print(e)
 
 
-
-
-    # def get_installer_from_dir(self):
-    #     directory = r"C:\Users\dklec\Downloads"
-    #     file_name = "Aslains_WoT_Modpack_Installer_v."
-    #
-    #     full_name = ("Aslains_WoT_Modpack_Installer_v."
-    #                  + self.get_mod_version_number()
-    #                  + self.get_next_number() + ".exe.torrent")
-    #
-    #     subprocess.Popen(os.path.join(directory, file_name
-    #                                   + self.get_mod_version_number()
-    #                                   + self.get_next_number() + ".exe"))
-    #
-    #     print("***Mod " + full_name + " - został pomyślnie zainstalowany***")
-    #     webdriver.Chrome.close(self.browser)
-
-
+# def get_installer_from_dir(self):
+#     directory = r"C:\Users\dklec\Downloads"
+#     file_name = "Aslains_WoT_Modpack_Installer_v."
+#
+#     full_name = ("Aslains_WoT_Modpack_Installer_v."
+#                  + self.get_mod_version_number()
+#                  + self.get_next_number() + ".exe.torrent")
+#
+#     subprocess.Popen(os.path.join(directory, file_name
+#                                   + self.get_mod_version_number()
+#                                   + self.get_next_number() + ".exe"))
+#
+#     print("***Mod " + full_name + " - został pomyślnie zainstalowany***")
+#     webdriver.Chrome.close(self.browser)
 
 
 mods = ModDownload()
@@ -125,4 +114,4 @@ mods.accept_cookies()
 mods.mod_download()
 mods.get_mod_version_number()
 mods.get_next_number()
-mods.wait_for_file()
+mods.wait_for_file_and_open()
