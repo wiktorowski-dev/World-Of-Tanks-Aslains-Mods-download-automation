@@ -1,7 +1,10 @@
+import logging
 import os
 import subprocess
 import time
 import re
+
+from selenium.webdriver.support.wait import WebDriverWait
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -9,14 +12,16 @@ from selenium.webdriver.chrome.options import Options
 
 class ModDownload():
 
+
     def __init__(self):
         chrome_options = Options()
         chrome_options.add_argument("user-data-dir=selenium")
 
-        self.browser = webdriver.Chrome(executable_path=r'C:\webdrivers\chromedriver.exe', options=chrome_options)
+
+        self.browser = webdriver.Chrome(options=chrome_options)
 
     def get_page(self):
-        print("Pobieranie url")
+        print("***Pobieranie url***")
         self.browser.get('https://aslain.com/index.php?/topic/13-download-%E2%98%85-world-of-tanks-%E2%98%85-modpack/')
         time.sleep(1)
 
@@ -26,7 +31,6 @@ class ModDownload():
         self.accept.click()
         time.sleep(1)
 
-
     # TODO dodac try i except na klikanie roznych directow, przejsc do chrome downloads zeby dac allow na pobranie pliku
     def mod_download(self):
 
@@ -34,9 +38,8 @@ class ModDownload():
             '//*[@id="comment-13_wrap"]/div[2]/div[1]/p[9]/span/a')[0]
         time.sleep(1)
         self.direct.click()
-        print("pobieranie moda")
-        time.sleep(10.0)
-
+        print("***Pobieranie moda***")
+        time.sleep(1.0)
 
     def get_mod_version_number(self):
         self.version = self.browser.find_elements_by_xpath(
@@ -72,22 +75,48 @@ class ModDownload():
 
         return number
 
-    def get_installer_from_dir(self):
-        directory = r"C:\Users\dklec\Downloads"
-        file_name = "Aslains_WoT_Modpack_Installer_v."
+    def wait_for_file(self):
+        path_downloads = r"C:\Users\dklec\Downloads"
 
-        full_name = ("Aslains_WoT_Modpack_Installer_v."
+        file_name = ("Aslains_WoT_Modpack_Installer_v."
                      + self.get_mod_version_number()
-                     + self.get_next_number() + ".exe.torrent")
-        print(full_name)
+                     + self.get_next_number() + ".exe")
 
-        subprocess.Popen(os.path.join(directory, file_name
-                                      + self.get_mod_version_number()
-                                      + self.get_next_number() + ".exe"))
-        # TODO dodac opcje czekania tak dlugo az mod sie nie pobieze, dodac try i except
-        # TODO zrobic refactor
-        time.sleep(10)
-        print("Mod " + full_name + " - został pomyślnie zainstalowany. Ale po chuj i tak wsm mi sie nie chce grac xD")
+        file_path_fix_name = ("Aslains_WoT_Modpack_Installer_v."
+                     + self.get_mod_version_number()
+                     + self.get_next_number())
+        # TODO dlaczego tego kurwa nie ma, moze zrobic to inaczej
+        while not os.path.exists("Aslains_WoT_Modpack_Installer_v.1.11.1.3_00"):
+            time.sleep(1)
+
+            print("nie ma")
+
+        if os.path.isfile(file_path_fix_name):
+            subprocess.Popen(os.path.join(path_downloads, file_name
+                                          + self.get_mod_version_number()
+                                          + self.get_next_number() + ".exe"))
+        else:
+            raise ValueError("%s isn't a file!" % file_name)
+
+
+
+
+    # def get_installer_from_dir(self):
+    #     directory = r"C:\Users\dklec\Downloads"
+    #     file_name = "Aslains_WoT_Modpack_Installer_v."
+    #
+    #     full_name = ("Aslains_WoT_Modpack_Installer_v."
+    #                  + self.get_mod_version_number()
+    #                  + self.get_next_number() + ".exe.torrent")
+    #
+    #     subprocess.Popen(os.path.join(directory, file_name
+    #                                   + self.get_mod_version_number()
+    #                                   + self.get_next_number() + ".exe"))
+    #
+    #     print("***Mod " + full_name + " - został pomyślnie zainstalowany***")
+    #     webdriver.Chrome.close(self.browser)
+
+
 
 
 mods = ModDownload()
@@ -96,4 +125,4 @@ mods.accept_cookies()
 mods.mod_download()
 mods.get_mod_version_number()
 mods.get_next_number()
-mods.get_installer_from_dir()
+mods.wait_for_file()
