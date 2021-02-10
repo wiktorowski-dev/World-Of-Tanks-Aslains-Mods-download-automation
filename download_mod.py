@@ -1,16 +1,14 @@
-import logging
 import os
+import re
 import subprocess
 import time
-import re
 
-from selenium.webdriver.support.wait import WebDriverWait
-
-from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+from selenium import webdriver
 
-class ModDownload():
+
+class ModDownload:
 
     def __init__(self):
         chrome_options = Options()
@@ -19,8 +17,10 @@ class ModDownload():
         self.browser = webdriver.Chrome(options=chrome_options)
 
     def get_page(self):
-        print("***Pobieranie url***")
-        self.browser.get('https://aslain.com/index.php?/topic/13-download-%E2%98%85-world-of-tanks-%E2%98%85-modpack/')
+        url = 'https://aslain.com/index.php?/topic/13-download-%E2%98%85-world-of-tanks-%E2%98%85-modpack/'
+        print("***Getting URL***")
+
+        self.browser.get(url)
         time.sleep(1)
 
     def accept_cookies(self):
@@ -29,14 +29,43 @@ class ModDownload():
         self.accept.click()
         time.sleep(1)
 
-    # TODO dodac try i except na klikanie roznych directow, przejsc do chrome downloads zeby dac allow na pobranie pliku
     def mod_download(self):
+        download_href_1 = '//*[@id="comment-13_wrap"]/div[2]/div[1]/p[9]/span/a'
+        download_href_2 = '//*[@id="comment-13_wrap"]/div[2]/div[1]/p[10]/span/a'
+        download_href_3 = '//*[@id="comment-13_wrap"]/div[2]/div[1]/p[11]/span[3]/a'
 
-        self.direct = self.browser.find_elements_by_xpath(
-            '//*[@id="comment-13_wrap"]/div[2]/div[1]/p[9]/span/a')[0]
+        while True:
+
+            try:
+                print("***Attempt to download link ...")
+                time.sleep(1.0)
+                self.direct = self.browser.find_elements_by_xpath(download_href_1)[0]
+                break
+            except Exception as e:
+                print("***Invalid link!*** ", e)
+                time.sleep(1.0)
+
+            try:
+                print("***Attempt to download next link ...")
+                time.sleep(1.0)
+                self.direct = self.browser.find_elements_by_xpath(download_href_2)[0]
+                break
+            except Exception as e:
+                print("***Invalid link!*** ", e)
+                time.sleep(1.0)
+
+            try:
+                print("***Attempt to download next link ...")
+                time.sleep(1.0)
+                self.direct = self.browser.find_elements_by_xpath(download_href_3)[0]
+                break
+            except Exception as e:
+                print("***Invalid link!*** ", e)
+                break
+
         time.sleep(1)
         self.direct.click()
-        print("***Pobieranie moda***")
+        print("***Aslain's Mods Downloading***")
         time.sleep(1.0)
 
     def get_mod_version_number(self):
@@ -75,37 +104,26 @@ class ModDownload():
 
     def wait_for_file_and_open(self):
         path_downloads = r"C:\Users\dklec\Downloads"
-        full_file_path = r"C:\Users\dklec\Downloads\Aslains_WoT_Modpack_Installer_v.1.11.1.3_00.exe"
 
         file_name = "Aslains_WoT_Modpack_Installer_v." + self.get_mod_version_number() + self.get_next_number() + ".exe"
+        full_file_path = path_downloads + '\\' + file_name
 
         while not os.path.exists(full_file_path):
             time.sleep(3.0)
+            print("***File not found, retry ...")
 
-            print("File doesnt exist, retry ...")
+            # TODO wylaczyc program jezeli przegladarka zostala zamknieta
+            # if 1:
+            #     webdriver.Chrome.close(self.browser)
+
         try:
+            print("***File was found! Opening ...")
             subprocess.Popen(os.path.join(path_downloads, file_name))
 
             webdriver.Chrome.close(self.browser)
 
         except Exception as e:
             print(e)
-
-
-# def get_installer_from_dir(self):
-#     directory = r"C:\Users\dklec\Downloads"
-#     file_name = "Aslains_WoT_Modpack_Installer_v."
-#
-#     full_name = ("Aslains_WoT_Modpack_Installer_v."
-#                  + self.get_mod_version_number()
-#                  + self.get_next_number() + ".exe.torrent")
-#
-#     subprocess.Popen(os.path.join(directory, file_name
-#                                   + self.get_mod_version_number()
-#                                   + self.get_next_number() + ".exe"))
-#
-#     print("***Mod " + full_name + " - został pomyślnie zainstalowany***")
-#     webdriver.Chrome.close(self.browser)
 
 
 mods = ModDownload()
