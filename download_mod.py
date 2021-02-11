@@ -1,7 +1,12 @@
+from __future__ import print_function
+
 import os
+import sys
+os.chdir(os.path.join(os.getcwd(), os.path.dirname(sys.argv[0])))
 import re
 import subprocess
 import time
+import pywinauto
 
 from selenium.webdriver.chrome.options import Options
 
@@ -118,12 +123,29 @@ class ModDownload:
 
         try:
             print("***File was found! Opening ...")
-            subprocess.Popen(os.path.join(path_downloads, file_name))
+            # subprocess.Popen(os.path.join(path_downloads, file_name))
 
-            webdriver.Chrome.close(self.browser)
+            # webdriver.Chrome.quit(self.browser)
 
         except Exception as e:
             print(e)
+    # TODO dokonczyc chociaz pierwszy handle opener z pywinauto
+    def py_auto_test(self):
+        path_downloads = r"C:\Users\dklec\Downloads"
+
+        file_name = "Aslains_WoT_Modpack_Installer_v." + self.get_mod_version_number() + self.get_next_number() + ".exe"
+        full_file_path = path_downloads + '\\' + file_name
+        time.sleep(2.0)
+        webdriver.Chrome.quit(self.browser)
+        time.sleep(2.0)
+
+        app = pywinauto.Application().start(full_file_path)
+        time.sleep(2.0)
+
+
+
+
+
 
 
 mods = ModDownload()
@@ -133,3 +155,4 @@ mods.mod_download()
 mods.get_mod_version_number()
 mods.get_next_number()
 mods.wait_for_file_and_open()
+mods.py_auto_test()
