@@ -2,11 +2,22 @@ from __future__ import print_function
 
 import os
 import sys
+import traceback
+import types
+
+from pywinauto import Application, mouse, findwindows
+from win32comext.shell import shellcon
+from win32comext.shell.shell import ShellExecuteEx
+# from elevate import elevate
+
 os.chdir(os.path.join(os.getcwd(), os.path.dirname(sys.argv[0])))
 import re
 import subprocess
 import time
 import pywinauto
+import ctypes
+import sys
+
 
 from selenium.webdriver.chrome.options import Options
 
@@ -20,6 +31,7 @@ class ModDownload:
         chrome_options.add_argument("user-data-dir=selenium")
 
         self.browser = webdriver.Chrome(options=chrome_options)
+
 
     def get_page(self):
         url = 'https://aslain.com/index.php?/topic/13-download-%E2%98%85-world-of-tanks-%E2%98%85-modpack/'
@@ -129,6 +141,7 @@ class ModDownload:
 
         except Exception as e:
             print(e)
+
     # TODO dokonczyc chociaz pierwszy handle opener z pywinauto
     def py_auto_test(self):
         path_downloads = r"C:\Users\dklec\Downloads"
@@ -137,14 +150,29 @@ class ModDownload:
         full_file_path = path_downloads + '\\' + file_name
         time.sleep(2.0)
         webdriver.Chrome.quit(self.browser)
-        time.sleep(2.0)
 
-        app = pywinauto.Application().start(full_file_path)
-        time.sleep(2.0)
+        app = Application(backend='win32').start( full_file_path)
+        time.sleep(3.0)
+        app.connect(title='Język instalacji')
 
+        dlg = app['Język instalacji']
+        time.sleep(3.0)
+        dlg.print_control_identifiers()
+        # w_handle = dlg.OKButton(findwindows.find_windows(class_name='TSelectLanguageForm'))
+        # window = app.window_(handle=w_handle[0])
+        # lv = window.Children()[3]
+        # lv.GetItem(1)
+        # w_handle.print_control_identifiers()
 
+        # mouse.move(coords=(1752, 776))
 
-
+        # TEST FOR NOTEPAD
+        # app = Application(backend='win32').start(r"C:\windows\system32\notepad.exe")
+        # time.sleep(3.0)
+        # print(app.windows())
+        #
+        # dlg = app['Bez tytułu — Notatnik']
+        # dlg.print_control_identifiers()
 
 
 
@@ -156,3 +184,4 @@ mods.get_mod_version_number()
 mods.get_next_number()
 mods.wait_for_file_and_open()
 mods.py_auto_test()
+
