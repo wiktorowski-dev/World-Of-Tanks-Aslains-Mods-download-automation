@@ -2,27 +2,14 @@ from __future__ import print_function
 
 import os
 import sys
-import traceback
-import types
-import win32ui
+import re
+import time
 
-from pywinauto import Application, mouse, findwindows
-from win32comext.shell import shellcon
-from win32comext.shell.shell import ShellExecuteEx
-
-# from elevate import elevate
+from pywinauto import Application
+from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
 
 os.chdir(os.path.join(os.getcwd(), os.path.dirname(sys.argv[0])))
-import re
-import subprocess
-import time
-import pywinauto
-import ctypes
-import sys
-
-from selenium.webdriver.chrome.options import Options
-
-from selenium import webdriver
 
 
 class ModDownload:
@@ -135,9 +122,7 @@ class ModDownload:
 
         try:
             print("***File was found! Opening ...")
-            # subprocess.Popen(os.path.join(path_downloads, file_name))
 
-            # webdriver.Chrome.quit(self.browser)
 
         except Exception as e:
             print(e)
@@ -150,17 +135,11 @@ class ModDownload:
         time.sleep(2.0)
         webdriver.Chrome.quit(self.browser)
 
-        # print("##############################")
-        # dlg.print_control_identifiers()
-        # print("##############################")
-
         app = Application(backend='win32').start(full_file_path)
         time.sleep(3.0)
 
         app.connect(path=file_name)
         app.connect(title='Język instalacji')
-
-        print("*** app.windows():  ", app.windows())
 
         dlg = app.window(title='Język instalacji')
         time.sleep(3.0)
@@ -173,34 +152,61 @@ class ModDownload:
 
         app = Application(backend='win32')
 
-        app.connect(title="Aslain's WoT Modpack - Welcome Page")
-        dlg = app.window(title="Aslain's WoT Modpack - Welcome Page")
-
         try:
-            dlg.child_window(title='Dalej >', class_name='TNewButton').click()
-            print("***First dialog clicked ...")
+            for i in range(1, 9):
+                if i == 1:
+                    app.connect(title="Aslain's WoT Modpack - Welcome Page")
+                    dlg = app.window(title="Aslain's WoT Modpack - Welcome Page")
+                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+                    print("*** ", i, " dialog clicked ...")
+                    time.sleep(1.0)
+                if i == 2:
+                    app.connect(title="Aslain's WoT Modpack - Read-Me Page")
+                    dlg = app.window(title="Aslain's WoT Modpack - Read-Me Page")
+                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+                    print("*** ", i, " dialog clicked ...")
+                    time.sleep(1.0)
+                if i == 3:
+                    app.connect(title="Aslain's WoT Modpack - Change-Log Page")
+                    dlg = app.window(title="Aslain's WoT Modpack - Change-Log Page")
+                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+                    print("*** ", i, " dialog clicked ...")
+                    time.sleep(1.0)
+                if i == 4:
+                    app.connect(title="Aslain's WoT Modpack - Directory Selection Page")
+                    dlg = app.window(title="Aslain's WoT Modpack - Directory Selection Page")
+                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+                    print("*** ", i, " dialog clicked ...")
+                    time.sleep(2.0)
+                if i == 5:
+                    app.connect(title="Aslain's WoT Modpack - Mod Selection Page")
+                    dlg = app.window(title="Aslain's WoT Modpack - Mod Selection Page")
+                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+                    print("*** ", i, " dialog clicked ...")
+                    time.sleep(1.0)
+                if i == 6:
+                    app.connect(title="Aslain's WoT Modpack - Task Selection Page")
+                    dlg = app.window(title="Aslain's WoT Modpack - Task Selection Page")
+                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+                    print("*** ", i, " dialog clicked ...")
+                    time.sleep(1.0)
+                if i == 7:
+                    app.connect(title="Aslain's WoT Modpack - Ready Page")
+                    dlg = app.window(title="Aslain's WoT Modpack - Ready Page")
+                    dlg.child_window(title='&Instaluj', class_name='TNewButton').click()
+                    print("*** ", i, " dialog clicked ...")
+                    time.sleep(15.0)
+                if i == 8:
+                    app.connect(title="Aslain's WoT Modpack - Finished Page")
+                    dlg = app.window(title="Aslain's WoT Modpack - Finished Page")
+                    # dlg.print_control_identifiers()
+                    dlg.child_window(title='&Zakończ', class_name='TNewButton').click()
+                    print("*** ", i, " dialog clicked ...")
+
         except Exception as e:
             print(e)
 
-        # app.connect(title="Aslain's WoT Modpack - Read-Me Page")
-        # dlg_1 = app.window(title="Aslain's WoT Modpack - Read-Me Page")
-        #
-        # try:
-        #     dlg_1.child_window(title='Dalej >', class_name='TNewButton').click()
-        #     print("***Second dialog clicked ...")
-        # except Exception as e:
-        #     print(e)
-        #
-        # app.connect(title="Aslain's WoT Modpack - Change-Log Page")
-        # dlg_2 = app.window(title="Aslain's WoT Modpack - Change-Log Page")
-        #
-        # try:
-        #     dlg_2.child_window(title='Dalej >', class_name='TNewButton').click()
-        #     print("***Third dialog clicked ...")
-        # except Exception as e:
-        #     print(e)
-
-        time.sleep(10)
+        time.sleep(5)
 
 
 mods = ModDownload()
