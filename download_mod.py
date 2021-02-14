@@ -4,10 +4,12 @@ import os
 import sys
 import traceback
 import types
+import win32ui
 
 from pywinauto import Application, mouse, findwindows
 from win32comext.shell import shellcon
 from win32comext.shell.shell import ShellExecuteEx
+
 # from elevate import elevate
 
 os.chdir(os.path.join(os.getcwd(), os.path.dirname(sys.argv[0])))
@@ -17,7 +19,6 @@ import time
 import pywinauto
 import ctypes
 import sys
-
 
 from selenium.webdriver.chrome.options import Options
 
@@ -32,7 +33,6 @@ class ModDownload:
 
         self.browser = webdriver.Chrome(options=chrome_options)
 
-
     def get_page(self):
         url = 'https://aslain.com/index.php?/topic/13-download-%E2%98%85-world-of-tanks-%E2%98%85-modpack/'
         print("***Getting URL***")
@@ -42,9 +42,9 @@ class ModDownload:
 
     def accept_cookies(self):
         self.accept = self.browser.find_elements_by_xpath('//*[@id="elGuestTerms"]/div/div/div[2]/a')[0]
-        time.sleep(1)
+        # time.sleep(1)
         self.accept.click()
-        time.sleep(1)
+        # time.sleep(1)
 
     def mod_download(self):
         download_href_1 = '//*[@id="comment-13_wrap"]/div[2]/div[1]/p[9]/span/a'
@@ -80,10 +80,10 @@ class ModDownload:
                 print("***Invalid link!*** ", e)
                 break
 
-        time.sleep(1)
+        # time.sleep(1)
         self.direct.click()
         print("***Aslain's Mods Downloading***")
-        time.sleep(1.0)
+        # time.sleep(1.0)
 
     def get_mod_version_number(self):
         self.version = self.browser.find_elements_by_xpath(
@@ -142,7 +142,6 @@ class ModDownload:
         except Exception as e:
             print(e)
 
-    # TODO dokonczyc chociaz pierwszy handle opener z pywinauto
     def py_auto_test(self):
         path_downloads = r"C:\Users\dklec\Downloads"
 
@@ -151,29 +150,57 @@ class ModDownload:
         time.sleep(2.0)
         webdriver.Chrome.quit(self.browser)
 
-        app = Application(backend='win32').start( full_file_path)
+        # print("##############################")
+        # dlg.print_control_identifiers()
+        # print("##############################")
+
+        app = Application(backend='win32').start(full_file_path)
         time.sleep(3.0)
+
+        app.connect(path=file_name)
         app.connect(title='Język instalacji')
 
-        dlg = app['Język instalacji']
+        print("*** app.windows():  ", app.windows())
+
+        dlg = app.window(title='Język instalacji')
         time.sleep(3.0)
-        dlg.print_control_identifiers()
-        # w_handle = dlg.OKButton(findwindows.find_windows(class_name='TSelectLanguageForm'))
-        # window = app.window_(handle=w_handle[0])
-        # lv = window.Children()[3]
-        # lv.GetItem(1)
-        # w_handle.print_control_identifiers()
 
-        # mouse.move(coords=(1752, 776))
+        dlg.child_window(title='OK', class_name='TNewButton').click()
+        print("***Button 'OK' was clicked ...")
 
-        # TEST FOR NOTEPAD
-        # app = Application(backend='win32').start(r"C:\windows\system32\notepad.exe")
-        # time.sleep(3.0)
-        # print(app.windows())
+    def click_next(self):
+        time.sleep(20)
+
+        app = Application(backend='win32')
+
+        app.connect(title="Aslain's WoT Modpack - Welcome Page")
+        dlg = app.window(title="Aslain's WoT Modpack - Welcome Page")
+
+        try:
+            dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+            print("***First dialog clicked ...")
+        except Exception as e:
+            print(e)
+
+        # app.connect(title="Aslain's WoT Modpack - Read-Me Page")
+        # dlg_1 = app.window(title="Aslain's WoT Modpack - Read-Me Page")
         #
-        # dlg = app['Bez tytułu — Notatnik']
-        # dlg.print_control_identifiers()
+        # try:
+        #     dlg_1.child_window(title='Dalej >', class_name='TNewButton').click()
+        #     print("***Second dialog clicked ...")
+        # except Exception as e:
+        #     print(e)
+        #
+        # app.connect(title="Aslain's WoT Modpack - Change-Log Page")
+        # dlg_2 = app.window(title="Aslain's WoT Modpack - Change-Log Page")
+        #
+        # try:
+        #     dlg_2.child_window(title='Dalej >', class_name='TNewButton').click()
+        #     print("***Third dialog clicked ...")
+        # except Exception as e:
+        #     print(e)
 
+        time.sleep(10)
 
 
 mods = ModDownload()
@@ -184,4 +211,4 @@ mods.get_mod_version_number()
 mods.get_next_number()
 mods.wait_for_file_and_open()
 mods.py_auto_test()
-
+mods.click_next()
