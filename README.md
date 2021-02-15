@@ -1,5 +1,3 @@
-World Of Tanks Aslain's Mod download automation.
-
 How to install ?
 1. Clone repository: git clone https://github.com/Kebirs/World-Of-Tanks-Aslains-Mods-download-automation
 2. Install Python in your machine.
