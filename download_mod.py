@@ -12,15 +12,34 @@ from selenium import webdriver
 os.chdir(os.path.join(os.getcwd(), os.path.dirname(sys.argv[0])))
 
 
+def wait_for_dialog(app, pages_names, page_num):
+    while True:
+        try:
+            app.connect(title_re=pages_names[page_num])
+            break
+        except Exception:
+            time.sleep(1.0)
+            print('*')
+            continue
+
+
+def click_next_button(app, pages_names, num):
+    app.connect(title_re=pages_names[num])
+    dlg = app.window(title_re=pages_names[num])
+    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+
+
 class ModDownload:
     app = Application(backend='win32')
+
+    pages_names = ["Język instalacji", ".*Welcome.*", ".*Read-Me.*", ".*Change-Log.*", ".*Directory Selection.*",
+                   ".*Mod Selection.*", ".*Task Selection.*", ".*Ready Page.*", ".*Finished Page.*"]
 
     def __init__(self):
         chrome_options = Options()
         chrome_options.add_argument("user-data-dir=selenium")
 
         self.browser = webdriver.Chrome(options=chrome_options)
-
 
     def get_page(self):
         url = 'https://aslain.com/index.php?/topic/13-download-%E2%98%85-world-of-tanks-%E2%98%85-modpack/'
@@ -120,109 +139,61 @@ class ModDownload:
         app.start(full_file_path)
         app.connect(path=file_name)
 
-    def dialog_click_next(self, app):
+    def dialog_click_next(self, app, pages_names):
 
         try:
-            for i in range(0, 9):
-                if i == 0:
-                    time.sleep(0.1)
-                    app.connect(title='Język instalacji')
-                    app.window(title='Język instalacji').wait('ready', timeout=5.0, retry_interval=0.1)
+            for i in range(len(pages_names)):
 
-                    dlg = app.window(title='Język instalacji')
+                if i == 0:
+                    time.sleep(0.5)
+                    app.connect(title=pages_names[0])
+                    app.window(title=pages_names[0]).wait('ready', timeout=5.0, retry_interval=0.1)
+
+                    dlg = app.window(title=pages_names[0])
                     dlg.child_window(title='OK', class_name='TNewButton').click()
 
-                    print("***Button 'OK' was clicked ...")
                     time.sleep(0.5)
                     print("***Waiting for Installer Setup Dialog ...")
 
                 if i == 1:
                     time.sleep(0.1)
-                    # time.sleep(20.0)
-                    while True:
-                        try:
-                            app.connect(title_re=".*Welcome.*")
-                            print('***Connected***')
-                            break
-                        except Exception:
-                            time.sleep(1.0)
-                            print('***')
-                            continue
+                    wait_for_dialog(app, pages_names, 1)
 
-                    dlg = app.window(title_re=".*Welcome.*")
-                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
-
-                    print("*** ", i, " dialog clicked ...")
+                    click_next_button(app, pages_names, 1)
 
                 if i == 2:
                     time.sleep(0.1)
-                    app.connect(title_re=".*Read-Me.*")
-                    dlg = app.window(title_re=".*Read-Me.*")
-                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
-
-                    print("*** ", i, " dialog clicked ...")
+                    click_next_button(app, pages_names, 2)
 
                 if i == 3:
                     time.sleep(0.1)
-                    app.connect(title_re=".*Change-Log.*")
-                    dlg = app.window(title_re=".*Change-Log.*")
-                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
-
-                    print("*** ", i, " dialog clicked ...")
+                    click_next_button(app, pages_names, 3)
 
                 if i == 4:
                     time.sleep(0.1)
-                    app.connect(title_re=".*Directory Selection.*")
-                    dlg = app.window(title_re=".*Directory Selection.*")
-                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
-
-                    print("*** ", i, " dialog clicked ...")
+                    click_next_button(app, pages_names, 4)
 
                 if i == 5:
                     time.sleep(1.5)
-
-                    app.connect(title_re=".*Mod Selection.*")
-                    dlg = app.window(title_re=".*Mod Selection.*")
-                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
-
-                    print("*** ", i, " dialog clicked ...")
+                    click_next_button(app, pages_names, 5)
 
                 if i == 6:
                     time.sleep(0.1)
-                    app.connect(title_re=".*Task Selection.*")
-                    dlg = app.window(title_re=".*Task Selection.*")
-                    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
-
-                    print("*** ", i, " dialog clicked ...")
+                    click_next_button(app, pages_names, 6)
 
                 if i == 7:
                     time.sleep(0.1)
-                    app.connect(title_re=".*Ready Page.*")
-                    dlg = app.window(title_re=".*Ready Page.*")
+                    dlg = app.window(title_re=pages_names[7])
                     dlg.child_window(title='&Instaluj', class_name='TNewButton').click()
 
-                    print("*** ", i, " dialog clicked ...")
-
                 if i == 8:
-                    while True:
-                        try:
-                            app.connect(title_re=".*Finished Page.*")
-                            print('***Connected***')
-                            break
-                        except Exception:
-                            time.sleep(1.0)
-                            print('***')
-                            continue
+                    wait_for_dialog(app, pages_names, 8)
 
-                    dlg = app.window(title_re=".*Finished Page.*")
+                    dlg = app.window(title_re=pages_names[8])
                     dlg.child_window(title='&Zakończ', class_name='TNewButton').click()
-
-                    print("*** ", i, " dialog clicked ...")
 
         except Exception as e:
             print(e)
-
-        print("***Mods instalation complete***")
 
 
 mods = ModDownload()
@@ -232,4 +203,4 @@ mods.mod_download()
 mods.get_mod_version_number()
 mods.get_next_number()
 mods.open_and_connect_dialog(ModDownload.app)
-mods.dialog_click_next(ModDownload.app)
+mods.dialog_click_next(ModDownload.app, ModDownload.pages_names)
