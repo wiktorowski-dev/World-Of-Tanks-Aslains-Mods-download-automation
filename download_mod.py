@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import os, sys, time, download_mod_headless as dmh
+import os, sys, time, download_mod_headless
 
 from pywinauto import Application
 
@@ -8,7 +8,7 @@ from pywinauto import Application
 os.chdir(os.path.join(os.getcwd(), os.path.dirname(sys.argv[0])))
 
 
-# Customowy "czekacz"
+# Custom "wait"
 def wait_for_dialog(app, pages_names, page_num):
     while True:
         try:
@@ -20,6 +20,7 @@ def wait_for_dialog(app, pages_names, page_num):
             continue
 
 
+# Navigation through installer dialogs
 def click_next_button(app, pages_names, num):
     app.connect(title_re=pages_names[num])
     dlg = app.window(title_re=pages_names[num])
@@ -29,18 +30,22 @@ def click_next_button(app, pages_names, num):
 class ModInstall:
     app = Application(backend='win32')
 
-    # TODO przerobic na dictionary
-    pages_names = ["Język instalacji", ".*Welcome.*", ".*Read-Me.*", ".*Change-Log.*",
+    # Installer Dialog re page names
+    pages_names = ["Język instalacji",
+                   ".*Welcome.*",
+                   ".*Read-Me.*",
+                   ".*Change-Log.*",
                    ".*Directory Selection.*",
-                   ".*Mod Selection.*", ".*Task Selection.*", ".*Ready Page.*", ".*Finished Page.*"]
+                   ".*Mod Selection.*",
+                   ".*Task Selection.*",
+                   ".*Ready Page.*",
+                   ".*Finished Page.*"]
 
     def __init__(self):
         """ Mod downloading headless, store in Project Folder as .exe"""
-        dmh.ModDownload()
+        download_mod_headless.ModDownload()
 
-    # Open file from \Downloads path
-    """ Installing downloaded mods"""
-
+    # Installing downloaded mods
     def open_and_connect_dialog(self, app):
         downloads_path = r"C:\Users\dklec\PycharmProjects\wot_mod_automatization"
         file_name = "Aslain_mod.exe"
@@ -53,13 +58,7 @@ class ModInstall:
             time.sleep(3.0)
             print("***File not found, retry ...")
 
-        try:
-            print("***File was found! Opening ...")
-        except Exception as e:
-            print(e)
-
-        # Close browser, no need anymore
-        time.sleep(1.0)
+        print("***File was found! Opening ...")
 
         # Open and connect file path
         app.start(full_file_path)
@@ -83,9 +82,7 @@ class ModInstall:
 
                 if i == 1:
                     time.sleep(0.1)
-                    wait_for_dialog(app, pages_names, 1)
-
-                    click_next_button(app, pages_names, 1)
+                    wait_for_dialog(app, pages_names, 1), click_next_button(app, pages_names, 1)
 
                 if i == 2:
                     time.sleep(0.1)
@@ -122,11 +119,6 @@ class ModInstall:
             print(e)
 
 
-download = ModInstall()
-# download.get_page()
-# download.accept_cookies()
-# download.mod_download()
-# download.get_mod_version_number()
-# download.get_next_number()
-download.open_and_connect_dialog(ModInstall.app)
-download.dialog_click_next(ModInstall.app, ModInstall.pages_names)
+install = ModInstall()
+install.open_and_connect_dialog(ModInstall.app)
+install.dialog_click_next(ModInstall.app, ModInstall.pages_names)

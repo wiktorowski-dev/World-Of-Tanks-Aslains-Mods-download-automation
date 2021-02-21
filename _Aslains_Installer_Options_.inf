@@ -1,8 +1,0 @@
-[Setup]
-Lang=pl
-Dir=D:\Games\World_of_Tanks_EU
-Group=(Default)
-NoIcons=0
-SetupType=custom
-Components=xvm,xvm\build,xvm\build\nightly,xvm\otm,xvm\otm\defaultxvm,xvm\panels,xvm\panels\defaultxvm,xvm\minimap,xvm\minimap\circles,xvm\minimap\circles\drawingrange,xvm\minimap\circles\drawingrange\bold,xvm\minimap\labels,xvm\minimap\labels\dead,xvm\minimap\labels\vehiclenames,xvm\minimap\labels\vehiclenames\full,xvm\minimap\iconscale,xvm\minimap\iconscale\1,xvm\damagecounters,xvm\damagecounters\v1,xvm\damagecounters\v1\ontop,xvm\colors,xvm\colors\original,xvm\xvmstats,xvm\xvmstats\ratingscale,xvm\xvmstats\ratingscale\aslains_six,xvm\sixsense,xvm\sixsense\duration,xvm\hangar,xvm\hangar\hangarstatistics,xvm\hangar\xvm_tank_carousel,xvm\hangar\xvm_tank_carousel\normal,xvm\hangar\xvm_tank_carousel\normal\2,xvm\addons,xvm\addons\autologin,xvm\addons\teamhp,xvm\addons\teamhp\numbers_only,modpack,modpack\camerascript_rn,modpack\camerascript_rn\zoomout,modpack\camerascript_rn\zoomout\arcade,modpack\camerascript_rn\zoomout\arcade\300,modpack\coloreddamagestickers,modpack\coloreddamagestickers\v3,modpack\gfxenhancers,modpack\gfxenhancers\fog_remover,modpack\gfxenhancers\fog_remover\fog_and_glare,modpack\garagemods,modpack\garagemods\sessionstats,modpack\garagemods\sessionstats\yasenkrasen,modpack\garagemods\sessionstats\yasenkrasen\core
-Tasks=install_clean,deletepython,create_shortcuts
