@@ -1,6 +1,7 @@
-# from __future__ import print_function
-
-import os, sys, time, download_mod_headless
+import download_mod_headless
+import os
+import sys
+import time
 
 from pywinauto import Application
 
@@ -8,7 +9,7 @@ from pywinauto import Application
 os.chdir(os.path.join(os.getcwd(), os.path.dirname(sys.argv[0])))
 
 
-class ModInstall:
+class ModInstall(object):
     app = Application(backend='win32')
 
     # Installer Dialog re page names
@@ -23,11 +24,14 @@ class ModInstall:
                    ".*Finished Page.*"]
 
     def __init__(self):
+        super(ModInstall, self).__init__()
         """ Mod downloading headless, store in Project Folder as .exe"""
         download_mod_headless.ModDownload()
 
     # Installing downloaded mods
-    def open_and_connect_dialog(self, app):
+    @staticmethod
+    def open_and_connect_dialog(app):
+        # todo SEPARATE PATH TO EXTERNAL FILE
         downloads_path = r"C:\Users\dklec\PycharmProjects\wot_mod_automatization"
         file_name = "Aslain_mod.exe"
 
@@ -47,23 +51,29 @@ class ModInstall:
 
     # Navigation through installer dialogs
     @staticmethod
-    def click_next_button(app, pages_names, num):
-        app.connect(title_re=pages_names[num])
-        dlg = app.window(title_re=pages_names[num])
+    def click_next_button(app, page_name):
+        app.connect(title_re=page_name)
+        dlg = app.window(title_re=page_name)
         dlg.child_window(title='Dalej >', class_name='TNewButton').click()
         time.sleep(0.1)
 
     # Custom "wait"
     @staticmethod
-    def wait_for_dialog(app, pages_names, page_num):
+    def wait_for_dialog(app, page_name):
+        # Infinite loop, what if the script will never connect? Make some raise exception if too many attempts
+        i = 0
         while True:
             try:
-                app.connect(title_re=pages_names[page_num])
+                app.connect(title_re=page_name)
                 break
             except Exception:
+                i += 1
                 time.sleep(1.0)
                 print('Waiting ...')
-                continue
+
+            i += 1
+            if i > 10:
+                raise Exception("Couldn't connect in wait_for_dialog")
 
     def dialog_click_next(self, app, pages_names):
 
@@ -71,45 +81,38 @@ class ModInstall:
 
             if i == 0:
                 time.sleep(0.5)
-                app.connect(title=pages_names[0])
-                app.window(title=pages_names[0]).wait('ready', timeout=5.0, retry_interval=0.1)
+                app.connect(title=pages_names[i])
+                app.window(title=pages_names[i]).wait('ready', timeout=5.0, retry_interval=0.1)
 
-                dlg = app.window(title=pages_names[0])
+                dlg = app.window(title=pages_names[i])
                 dlg.child_window(title='OK', class_name='TNewButton').click()
 
                 time.sleep(0.5)
                 print("***Waiting for Installer Setup Dialog ...")
 
+            if 1 < i < 7:
+                self.__base_click_button(app, pages_names, i)
+
             if i == 1:
+                # This micro delays are necessary?
                 time.sleep(0.1)
-                self.wait_for_dialog(app, pages_names, 1), self.click_next_button(app, pages_names, 1)
-
-            if i == 2:
-                self.click_next_button(app, pages_names, 2)
-
-            if i == 3:
-                self.click_next_button(app, pages_names, 3)
-
-            if i == 4:
-                self.click_next_button(app, pages_names, 4)
-
-            if i == 5:
-                time.sleep(1.5)
-                self.click_next_button(app, pages_names, 5)
-
-            if i == 6:
-                self.click_next_button(app, pages_names, 6)
+                self.wait_for_dialog(app, pages_names[i])
+                self.click_next_button(app, pages_names[i])
 
             if i == 7:
                 time.sleep(0.1)
-                dlg = app.window(title_re=pages_names[7])
+                dlg = app.window(title_re=pages_names[i])
                 dlg.child_window(title='&Instaluj', class_name='TNewButton').click()
 
             if i == 8:
-                self.wait_for_dialog(app, pages_names, 8)
+                self.wait_for_dialog(app, pages_names[i])
 
                 dlg = app.window(title_re=pages_names[8])
                 dlg.child_window(title='&Zakończ', class_name='TNewButton').click()
+
+    def __base_click_button(self, app, pages_names, i):
+        time.sleep(1)
+        self.click_next_button(app, pages_names[i])
 
 
 if __name__ == '__main__':
