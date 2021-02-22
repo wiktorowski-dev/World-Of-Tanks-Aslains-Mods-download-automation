@@ -8,26 +8,6 @@ from pywinauto import Application
 os.chdir(os.path.join(os.getcwd(), os.path.dirname(sys.argv[0])))
 
 
-# Custom "wait"
-def wait_for_dialog(app, pages_names, page_num):
-    while True:
-        try:
-            app.connect(title_re=pages_names[page_num])
-            break
-        except Exception:
-            time.sleep(1.0)
-            print('Waiting ...')
-            continue
-
-
-# Navigation through installer dialogs
-def click_next_button(app, pages_names, num):
-    app.connect(title_re=pages_names[num])
-    dlg = app.window(title_re=pages_names[num])
-    dlg.child_window(title='Dalej >', class_name='TNewButton').click()
-    time.sleep(0.1)
-
-
 class ModInstall:
     app = Application(backend='win32')
 
@@ -65,6 +45,26 @@ class ModInstall:
         app.start(full_file_path)
         app.connect(path=file_name)
 
+    # Navigation through installer dialogs
+    @staticmethod
+    def click_next_button(app, pages_names, num):
+        app.connect(title_re=pages_names[num])
+        dlg = app.window(title_re=pages_names[num])
+        dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+        time.sleep(0.1)
+
+    # Custom "wait"
+    @staticmethod
+    def wait_for_dialog(app, pages_names, page_num):
+        while True:
+            try:
+                app.connect(title_re=pages_names[page_num])
+                break
+            except Exception:
+                time.sleep(1.0)
+                print('Waiting ...')
+                continue
+
     def dialog_click_next(self, app, pages_names):
 
         for i in range(len(pages_names)):
@@ -82,23 +82,23 @@ class ModInstall:
 
             if i == 1:
                 time.sleep(0.1)
-                wait_for_dialog(app, pages_names, 1), click_next_button(app, pages_names, 1)
+                self.wait_for_dialog(app, pages_names, 1), self.click_next_button(app, pages_names, 1)
 
             if i == 2:
-                click_next_button(app, pages_names, 2)
+                self.click_next_button(app, pages_names, 2)
 
             if i == 3:
-                click_next_button(app, pages_names, 3)
+                self.click_next_button(app, pages_names, 3)
 
             if i == 4:
-                click_next_button(app, pages_names, 4)
+                self.click_next_button(app, pages_names, 4)
 
             if i == 5:
                 time.sleep(1.5)
-                click_next_button(app, pages_names, 5)
+                self.click_next_button(app, pages_names, 5)
 
             if i == 6:
-                click_next_button(app, pages_names, 6)
+                self.click_next_button(app, pages_names, 6)
 
             if i == 7:
                 time.sleep(0.1)
@@ -106,12 +106,13 @@ class ModInstall:
                 dlg.child_window(title='&Instaluj', class_name='TNewButton').click()
 
             if i == 8:
-                wait_for_dialog(app, pages_names, 8)
+                self.wait_for_dialog(app, pages_names, 8)
 
                 dlg = app.window(title_re=pages_names[8])
                 dlg.child_window(title='&Zakończ', class_name='TNewButton').click()
 
 
-install = ModInstall()
-install.open_and_connect_dialog(ModInstall.app)
-install.dialog_click_next(ModInstall.app, ModInstall.pages_names)
+if __name__ == '__main__':
+    install = ModInstall()
+    install.open_and_connect_dialog(ModInstall.app)
+    install.dialog_click_next(ModInstall.app, ModInstall.pages_names)
