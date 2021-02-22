@@ -1,4 +1,4 @@
-from __future__ import print_function
+# from __future__ import print_function
 
 import os, sys, time, download_mod_headless
 
@@ -25,6 +25,7 @@ def click_next_button(app, pages_names, num):
     app.connect(title_re=pages_names[num])
     dlg = app.window(title_re=pages_names[num])
     dlg.child_window(title='Dalej >', class_name='TNewButton').click()
+    time.sleep(0.1)
 
 
 class ModInstall:
@@ -66,57 +67,49 @@ class ModInstall:
 
     def dialog_click_next(self, app, pages_names):
 
-        try:
-            for i in range(len(pages_names)):
+        for i in range(len(pages_names)):
 
-                if i == 0:
-                    time.sleep(0.5)
-                    app.connect(title=pages_names[0])
-                    app.window(title=pages_names[0]).wait('ready', timeout=5.0, retry_interval=0.1)
+            if i == 0:
+                time.sleep(0.5)
+                app.connect(title=pages_names[0])
+                app.window(title=pages_names[0]).wait('ready', timeout=5.0, retry_interval=0.1)
 
-                    dlg = app.window(title=pages_names[0])
-                    dlg.child_window(title='OK', class_name='TNewButton').click()
+                dlg = app.window(title=pages_names[0])
+                dlg.child_window(title='OK', class_name='TNewButton').click()
 
-                    time.sleep(0.5)
-                    print("***Waiting for Installer Setup Dialog ...")
+                time.sleep(0.5)
+                print("***Waiting for Installer Setup Dialog ...")
 
-                if i == 1:
-                    time.sleep(0.1)
-                    wait_for_dialog(app, pages_names, 1), click_next_button(app, pages_names, 1)
+            if i == 1:
+                time.sleep(0.1)
+                wait_for_dialog(app, pages_names, 1), click_next_button(app, pages_names, 1)
 
-                if i == 2:
-                    time.sleep(0.1)
-                    click_next_button(app, pages_names, 2)
+            if i == 2:
+                click_next_button(app, pages_names, 2)
 
-                if i == 3:
-                    time.sleep(0.1)
-                    click_next_button(app, pages_names, 3)
+            if i == 3:
+                click_next_button(app, pages_names, 3)
 
-                if i == 4:
-                    time.sleep(0.1)
-                    click_next_button(app, pages_names, 4)
+            if i == 4:
+                click_next_button(app, pages_names, 4)
 
-                if i == 5:
-                    time.sleep(1.5)
-                    click_next_button(app, pages_names, 5)
+            if i == 5:
+                time.sleep(1.5)
+                click_next_button(app, pages_names, 5)
 
-                if i == 6:
-                    time.sleep(0.1)
-                    click_next_button(app, pages_names, 6)
+            if i == 6:
+                click_next_button(app, pages_names, 6)
 
-                if i == 7:
-                    time.sleep(0.1)
-                    dlg = app.window(title_re=pages_names[7])
-                    dlg.child_window(title='&Instaluj', class_name='TNewButton').click()
+            if i == 7:
+                time.sleep(0.1)
+                dlg = app.window(title_re=pages_names[7])
+                dlg.child_window(title='&Instaluj', class_name='TNewButton').click()
 
-                if i == 8:
-                    wait_for_dialog(app, pages_names, 8)
+            if i == 8:
+                wait_for_dialog(app, pages_names, 8)
 
-                    dlg = app.window(title_re=pages_names[8])
-                    dlg.child_window(title='&Zakończ', class_name='TNewButton').click()
-
-        except Exception as e:
-            print(e)
+                dlg = app.window(title_re=pages_names[8])
+                dlg.child_window(title='&Zakończ', class_name='TNewButton').click()
 
 
 install = ModInstall()

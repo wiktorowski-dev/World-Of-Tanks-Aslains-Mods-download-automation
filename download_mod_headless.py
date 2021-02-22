@@ -32,11 +32,6 @@ class ModDownload:
             # From some reasons other links are invalid, don't have .content
             target_file = requests.get(installer_links['link 1'])
 
-            # serv
-            print(target_file.headers)
-            # user
-            print(target_file.request.headers)
-
             print('***Saving into file...')
             f.write(target_file.content)
 
